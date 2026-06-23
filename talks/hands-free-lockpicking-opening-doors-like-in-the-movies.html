@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hands-Free Lockpicking： Opening Doors Like In The Movies // AREA41 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:       #00ff41;
+      --green-mid:   #00cc33;
+      --green-dim:   #007a1f;
+      --green-dark:  #003d0f;
+      --green-faint: rgba(0, 255, 65, 0.05);
+      --bg:          #040904;
+      --cyan:        #00ffcc;
+      --red:         #ff0040;
+      --amber:       #ffaa00;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--green);
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(var(--green-faint) 1px, transparent 1px),
+        linear-gradient(90deg, var(--green-faint) 1px, transparent 1px),
+        radial-gradient(circle, rgba(0,255,65,0.10) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px, 40px 40px;
+      background-position: 0 0, 0 0, 19px 19px;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .container { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    /* header */
+    .header {
+      border: 1px solid var(--green-dim);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0,255,65,0.02);
+    }
+    .header::before {
+      content: '[ AREA41::CONFERENCE::RECAP ]';
+      position: absolute; top: -0.65rem; left: 1.5rem;
+      background: var(--bg); padding: 0 0.75rem;
+      font-size: 0.82rem; color: var(--green-dim); letter-spacing: 0.1em;
+    }
+    .header-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .ascii-logo-wrap { position: relative; display: inline-block; }
+    .ascii-logo {
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 0.9rem; line-height: 1.25; white-space: pre;
+      color: var(--green);
+      text-shadow: 0 0 8px rgba(0,255,65,0.9), 0 0 16px rgba(0,255,65,0.5), 0 0 32px rgba(0,255,65,0.2);
+      animation: glitch 9s infinite;
+    }
+    .banner-sub { font-size: 0.82rem; color: var(--green-dim); letter-spacing: 0.3em; margin-top: 0.75rem; }
+    .banner-year { font-size: 0.82rem; letter-spacing: 0.5em; color: var(--cyan); margin-top: 0.1rem; }
+    .logo-sweep { position: absolute; inset: 0; pointer-events: none; }
+    .logo-sweep::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 45%;
+      background: linear-gradient(to bottom, transparent,
+        rgba(180,255,210,0.06) 15%, rgba(200,255,230,0.22) 50%,
+        rgba(180,255,210,0.06) 85%, transparent);
+      animation: logo-sweep 6s linear infinite;
+    }
+    @keyframes logo-sweep {
+      0%   { transform: translateY(-150%); opacity: 0; }
+      4%   { opacity: 1; }
+      28%  { transform: translateY(370%);  opacity: 1; }
+      29%  { transform: translateY(-150%); opacity: 0; }
+      100% { transform: translateY(-150%); opacity: 0; }
+    }
+    @keyframes glitch {
+      0%, 82%, 100% { text-shadow: 0 0 8px rgba(0,255,65,0.9), 0 0 16px rgba(0,255,65,0.5); transform: none; }
+      84% { text-shadow: -3px 0 var(--red), 3px 0 var(--cyan); transform: translate(-2px,0) skewX(-1deg); }
+      86% { text-shadow: 3px 0 var(--red), -3px 0 var(--cyan); transform: translate(2px,0); }
+      88% { text-shadow: -1px 0 var(--red); transform: skewX(0.5deg); }
+      90% { text-shadow: 0 0 8px rgba(0,255,65,0.9); transform: none; }
+    }
+    .ufo { font-size: 0.7rem; color: var(--green-dim); white-space: pre; line-height: 1.3; text-align: right; opacity: 0.6; flex-shrink: 0; }
+    /* section labels */
+    .section-label {
+      font-size: 0.85rem; color: var(--green-dim); letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--green-dark);
+    }
+    .section-label::before { content: '// '; color: var(--cyan); }
+    /* talk list */
+    .talk-list { list-style: none; margin-bottom: 3rem; }
+    .talk-list li { border-bottom: 1px solid rgba(0,255,65,0.06); }
+    .talk-list li:hover { background: rgba(0,255,65,0.03); }
+    .talk-link { display: flex; align-items: baseline; text-decoration: none; color: inherit; padding: 0.45rem 0.25rem; }
+    .t-num { color: var(--cyan); min-width: 5rem; flex-shrink: 0; font-size: 1rem; }
+    .t-title { color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
+    .t-dots { flex: 1; border-bottom: 1px dotted var(--green-dark); margin: 0 0.6rem; min-width: 1.5rem; position: relative; top: -0.35em; flex-shrink: 0; }
+    .t-speaker { color: var(--green-dim); white-space: nowrap; flex-shrink: 0; font-size: 1rem; }
+    .talk-link:hover .t-title { color: var(--cyan); }
+    .talk-link:hover .t-speaker { color: var(--green-mid); }
+    /* talk detail */
+    .breadcrumb { font-size: 0.9rem; color: var(--green-dim); margin-bottom: 1.5rem; }
+    .breadcrumb a { color: var(--cyan); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .talk-header {
+      border: 1px solid var(--green-dim); padding: 1.5rem 2rem; margin-bottom: 2rem;
+      position: relative; background: rgba(0,255,65,0.02);
+    }
+    .talk-num-badge { font-family: 'VT323', monospace; font-size: 1.2rem; color: var(--cyan); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+    .talk-title-large { font-family: 'VT323', monospace; font-size: 3rem; line-height: 1.1; color: var(--green); margin-bottom: 0.75rem; }
+    .talk-meta { font-size: 0.9rem; color: var(--green-dim); display: flex; gap: 2rem; flex-wrap: wrap; }
+    .talk-meta .label { color: var(--green-dark); }
+    .tldr-box {
+      border-left: 3px solid var(--cyan); background: rgba(0,255,204,0.04);
+      padding: 0.75rem 1rem; margin-bottom: 2rem; font-size: 1.05rem; color: var(--cyan);
+    }
+    .tldr-box::before { content: 'TL;DR > '; color: var(--green-dim); font-size: 0.82rem; }
+    .content-section { margin-bottom: 2rem; }
+    .content-section p { color: #a0cca0; margin-bottom: 0.75rem; }
+    .takeaway-list { list-style: none; }
+    .takeaway-list li { padding: 0.35rem 0 0.35rem 1.5rem; position: relative; color: #a0cca0; }
+    .takeaway-list li::before { content: '>>'; position: absolute; left: 0; color: var(--amber); }
+    .footer {
+      border-top: 1px solid var(--green-dark); padding-top: 1rem; margin-top: 3rem;
+      font-size: 0.85rem; color: var(--green-dark); display: flex; justify-content: space-between;
+    }
+    .footer a { color: var(--green-dim); text-decoration: none; }
+    .footer a:hover { color: var(--green); }
+    .ai-disclaimer {
+      font-size: 0.82rem; color: var(--green-dim);
+      border-top: 1px solid var(--green-dark);
+      padding-top: 0.75rem; margin-top: 2rem;
+    }
+    .review-notes {
+      border: 1px dashed var(--green-dark); padding: 0.75rem 1rem; margin-bottom: 2rem;
+      font-size: 0.82rem; color: var(--green-dim);
+    }
+    .review-notes summary { cursor: pointer; color: var(--green-dark); }
+    .review-notes li { margin-top: 0.25rem; }
+
+  </style>
+  
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="logo-sweep"></div>
+    <div class="header-inner">
+      <div>
+        <div class="ascii-logo-wrap">
+        <pre class="ascii-logo"> █████╗  ██████╗  ███████╗  █████╗      ██╗  ██╗  ██╗
+██╔══██╗ ██╔══██╗ ██╔════╝ ██╔══██╗    ██║  ██║ ███║
+███████║ ██████╔╝ █████╗   ███████║    ███████║ ╔██║
+██╔══██║ ██╔══██╗ ██╔══╝   ██╔══██║    ╔════██║  ██║
+██║  ██║ ██║  ██║ ███████╗ ██║  ██║         ██║  ██║
+╔═╝  ╔═╝ ╔═╝  ╔═╝ ╔══════╝ ╔═╝  ╔═╝         ╔═╝  ╔═╝</pre>
+        </div>
+        <div class="banner-sub">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+        <div class="banner-year">:: 2 0 2 6 :: C O N F E R E N C E :: R E C A P ::</div>
+      </div>
+      <pre class="ufo">    . * .  .  *
+  *    .    *
+     .-~~~-.
+  __|_______|__
+ (  .  .  .  . )
+  '~~~~~~~~~~~~~'
+      |   |
+   *  .   .  *
+  .  *  .    .</pre>
+    </div>
+  </header>
+
+  <div class="breadcrumb"><a href="../index.html">[INDEX]</a> &gt; 0x03</div>
+
+  <div class="talk-header">
+    <div class="talk-num-badge">0x03 // AREA41::2026</div>
+    <div class="talk-title-large">Hands-Free Lockpicking： Opening Doors Like In The Movies</div>
+    <div class="talk-meta">
+      <span><span class="label">SPEAKER:</span> Werner Schober & Clemens Stockenreitner</span>
+      <span><span class="label">DURATION:</span> 29:09</span>
+    </div>
+  </div>
+
+    <details class="review-notes">
+      <summary>// REVIEW NOTES (5)</summary>
+      <ul>
+        <li>Corrected 'Seconds Health' to 'SEC Consult', as it was a clear transcription error for the researchers' employer.</li>
+        <li>Corrected 'Dormacaba' to the proper vendor spelling 'Dormakaba'.</li>
+        <li>Adjusted the graphics server port from '105' to '1005', as the transcript's spoken 'port 1,05' (ten-oh-five) was misinterpreted by the original summary.</li>
+        <li>Corrected the transcript's phonetic 'little Indian' to the proper technical term 'little-endian'.</li>
+        <li>Removed garbled phonetic transcription of RFID protocols ('myfaclasticdesphere') and the Symbian integration name ('SackClockMorito') to maintain technical accuracy.</li>
+      </ul>
+    </details>
+
+  <div class="content-section">
+    <div class="section-label">SUMMARY</div>
+      <p>When SEC Consult relocated offices, researchers Werner Schober and Clemens Stockenreitner salvaged an active Dormakaba Access 9300 system. Equipped with management software, RFID readers, and access controllers, they set a goal to bypass physical security non-destructively over the network. Their auditing of the device configurations and proprietary communication protocols revealed severe structural flaws.</p>
+      <p>They uncovered three unauthenticated network methods to actuate door relays. The most glaring flaw was an unencrypted SOAP API on port 8002 that lacked authentication tokens or session checks. By enumerating incremental access manager IDs and sending a "release once" command, anyone on the network could remotely open doors. Additionally, reverse-engineering the system's graphics monitoring tool revealed hardcoded legacy credentials. Sending UTF-16 little-endian encoded payloads over port 1005 using these credentials triggered the same unlock actions. A third avenue existed on port 4000, where a legacy Symbian mobile phone interface processed unauthenticated RPC objects to actuate the relays.</p>
+      <p>Beyond direct door releases, the system exhibited severe secondary risks. The SOAP API allowed attackers to query plaintext user PINs and inject forged, arbitrarily timestamped log entries, neutralizing audit integrity. An attacker could also overwrite the administrative SQLite database to gain full control. On legacy K5 access controllers running Windows CE, a directory traversal vulnerability was traced to a 20-year-old hobbyist web server demo that was copied verbatim into the enterprise firmware. While the vendor initially argued that exploiting these flaws required secure internal network access, they bypassed this barrier by simply unplugging externally mounted Ethernet-connected time-tracking terminals to breach the secure perimeter.</p>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">KEY TAKEAWAYS</div>
+    <ul class="takeaway-list">
+      <li>Dormakaba Access 9300 systems exposed an unencrypted, unauthenticated SOAP API on port 8002, allowing attackers to unlock physical doors by sending a release once command.</li>
+      <li>The system's graphics monitoring application contained hardcoded legacy credentials that accepted raw, UTF-16 little-endian encoded TCP payloads over port 1005 to actuate door relays.</li>
+      <li>The legacy Windows CE firmware inside K5 access controllers utilized a copied 20-year-old hobbyist web server, introducing a directory traversal vulnerability that exposed the entire device configuration.</li>
+      <li>Attackers can abuse the unauthenticated API endpoints to overwrite administrative SQLite databases, query plaintext two-factor PINs, and forge event logs to hide unauthorized entries.</li>
+      <li>Physical network isolation defenses can be trivially bypassed by unplugging and connecting to externally mounted Ethernet peripherals, such as time-tracking clocks or biometric scanners.</li>
+    </ul>
+  </div>
+
+  <div class="ai-disclaimer">// This summary was generated by AI. AI can make mistakes. If in doubt, watch the original conference recording.</div>
+
+  <div class="footer">
+    <span>AREA41 2026 // TALK 0x03</span>
+    <span><a href="../index.html">&gt;&gt; BACK TO INDEX</a></span>
+  </div>
+</div>
+</body>
+</html>

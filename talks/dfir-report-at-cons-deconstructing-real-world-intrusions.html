@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFIR Report At Cons： Deconstructing Real-World Intrusions // AREA41 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:       #00ff41;
+      --green-mid:   #00cc33;
+      --green-dim:   #007a1f;
+      --green-dark:  #003d0f;
+      --green-faint: rgba(0, 255, 65, 0.05);
+      --bg:          #040904;
+      --cyan:        #00ffcc;
+      --red:         #ff0040;
+      --amber:       #ffaa00;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--green);
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(var(--green-faint) 1px, transparent 1px),
+        linear-gradient(90deg, var(--green-faint) 1px, transparent 1px),
+        radial-gradient(circle, rgba(0,255,65,0.10) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px, 40px 40px;
+      background-position: 0 0, 0 0, 19px 19px;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .container { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    /* header */
+    .header {
+      border: 1px solid var(--green-dim);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0,255,65,0.02);
+    }
+    .header::before {
+      content: '[ AREA41::CONFERENCE::RECAP ]';
+      position: absolute; top: -0.65rem; left: 1.5rem;
+      background: var(--bg); padding: 0 0.75rem;
+      font-size: 0.82rem; color: var(--green-dim); letter-spacing: 0.1em;
+    }
+    .header-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .ascii-logo-wrap { position: relative; display: inline-block; }
+    .ascii-logo {
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 0.9rem; line-height: 1.25; white-space: pre;
+      color: var(--green);
+      text-shadow: 0 0 8px rgba(0,255,65,0.9), 0 0 16px rgba(0,255,65,0.5), 0 0 32px rgba(0,255,65,0.2);
+      animation: glitch 9s infinite;
+    }
+    .banner-sub { font-size: 0.82rem; color: var(--green-dim); letter-spacing: 0.3em; margin-top: 0.75rem; }
+    .banner-year { font-size: 0.82rem; letter-spacing: 0.5em; color: var(--cyan); margin-top: 0.1rem; }
+    .logo-sweep { position: absolute; inset: 0; pointer-events: none; }
+    .logo-sweep::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 45%;
+      background: linear-gradient(to bottom, transparent,
+        rgba(180,255,210,0.06) 15%, rgba(200,255,230,0.22) 50%,
+        rgba(180,255,210,0.06) 85%, transparent);
+      animation: logo-sweep 6s linear infinite;
+    }
+    @keyframes logo-sweep {
+      0%   { transform: translateY(-150%); opacity: 0; }
+      4%   { opacity: 1; }
+      28%  { transform: translateY(370%);  opacity: 1; }
+      29%  { transform: translateY(-150%); opacity: 0; }
+      100% { transform: translateY(-150%); opacity: 0; }
+    }
+    @keyframes glitch {
+      0%, 82%, 100% { text-shadow: 0 0 8px rgba(0,255,65,0.9), 0 0 16px rgba(0,255,65,0.5); transform: none; }
+      84% { text-shadow: -3px 0 var(--red), 3px 0 var(--cyan); transform: translate(-2px,0) skewX(-1deg); }
+      86% { text-shadow: 3px 0 var(--red), -3px 0 var(--cyan); transform: translate(2px,0); }
+      88% { text-shadow: -1px 0 var(--red); transform: skewX(0.5deg); }
+      90% { text-shadow: 0 0 8px rgba(0,255,65,0.9); transform: none; }
+    }
+    .ufo { font-size: 0.7rem; color: var(--green-dim); white-space: pre; line-height: 1.3; text-align: right; opacity: 0.6; flex-shrink: 0; }
+    /* section labels */
+    .section-label {
+      font-size: 0.85rem; color: var(--green-dim); letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--green-dark);
+    }
+    .section-label::before { content: '// '; color: var(--cyan); }
+    /* talk list */
+    .talk-list { list-style: none; margin-bottom: 3rem; }
+    .talk-list li { border-bottom: 1px solid rgba(0,255,65,0.06); }
+    .talk-list li:hover { background: rgba(0,255,65,0.03); }
+    .talk-link { display: flex; align-items: baseline; text-decoration: none; color: inherit; padding: 0.45rem 0.25rem; }
+    .t-num { color: var(--cyan); min-width: 5rem; flex-shrink: 0; font-size: 1rem; }
+    .t-title { color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
+    .t-dots { flex: 1; border-bottom: 1px dotted var(--green-dark); margin: 0 0.6rem; min-width: 1.5rem; position: relative; top: -0.35em; flex-shrink: 0; }
+    .t-speaker { color: var(--green-dim); white-space: nowrap; flex-shrink: 0; font-size: 1rem; }
+    .talk-link:hover .t-title { color: var(--cyan); }
+    .talk-link:hover .t-speaker { color: var(--green-mid); }
+    /* talk detail */
+    .breadcrumb { font-size: 0.9rem; color: var(--green-dim); margin-bottom: 1.5rem; }
+    .breadcrumb a { color: var(--cyan); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .talk-header {
+      border: 1px solid var(--green-dim); padding: 1.5rem 2rem; margin-bottom: 2rem;
+      position: relative; background: rgba(0,255,65,0.02);
+    }
+    .talk-num-badge { font-family: 'VT323', monospace; font-size: 1.2rem; color: var(--cyan); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+    .talk-title-large { font-family: 'VT323', monospace; font-size: 3rem; line-height: 1.1; color: var(--green); margin-bottom: 0.75rem; }
+    .talk-meta { font-size: 0.9rem; color: var(--green-dim); display: flex; gap: 2rem; flex-wrap: wrap; }
+    .talk-meta .label { color: var(--green-dark); }
+    .tldr-box {
+      border-left: 3px solid var(--cyan); background: rgba(0,255,204,0.04);
+      padding: 0.75rem 1rem; margin-bottom: 2rem; font-size: 1.05rem; color: var(--cyan);
+    }
+    .tldr-box::before { content: 'TL;DR > '; color: var(--green-dim); font-size: 0.82rem; }
+    .content-section { margin-bottom: 2rem; }
+    .content-section p { color: #a0cca0; margin-bottom: 0.75rem; }
+    .takeaway-list { list-style: none; }
+    .takeaway-list li { padding: 0.35rem 0 0.35rem 1.5rem; position: relative; color: #a0cca0; }
+    .takeaway-list li::before { content: '>>'; position: absolute; left: 0; color: var(--amber); }
+    .footer {
+      border-top: 1px solid var(--green-dark); padding-top: 1rem; margin-top: 3rem;
+      font-size: 0.85rem; color: var(--green-dark); display: flex; justify-content: space-between;
+    }
+    .footer a { color: var(--green-dim); text-decoration: none; }
+    .footer a:hover { color: var(--green); }
+    .ai-disclaimer {
+      font-size: 0.82rem; color: var(--green-dim);
+      border-top: 1px solid var(--green-dark);
+      padding-top: 0.75rem; margin-top: 2rem;
+    }
+    .review-notes {
+      border: 1px dashed var(--green-dark); padding: 0.75rem 1rem; margin-bottom: 2rem;
+      font-size: 0.82rem; color: var(--green-dim);
+    }
+    .review-notes summary { cursor: pointer; color: var(--green-dark); }
+    .review-notes li { margin-top: 0.25rem; }
+
+  </style>
+  
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="logo-sweep"></div>
+    <div class="header-inner">
+      <div>
+        <div class="ascii-logo-wrap">
+        <pre class="ascii-logo"> █████╗  ██████╗  ███████╗  █████╗      ██╗  ██╗  ██╗
+██╔══██╗ ██╔══██╗ ██╔════╝ ██╔══██╗    ██║  ██║ ███║
+███████║ ██████╔╝ █████╗   ███████║    ███████║ ╔██║
+██╔══██║ ██╔══██╗ ██╔══╝   ██╔══██║    ╔════██║  ██║
+██║  ██║ ██║  ██║ ███████╗ ██║  ██║         ██║  ██║
+╔═╝  ╔═╝ ╔═╝  ╔═╝ ╔══════╝ ╔═╝  ╔═╝         ╔═╝  ╔═╝</pre>
+        </div>
+        <div class="banner-sub">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+        <div class="banner-year">:: 2 0 2 6 :: C O N F E R E N C E :: R E C A P ::</div>
+      </div>
+      <pre class="ufo">    . * .  .  *
+  *    .    *
+     .-~~~-.
+  __|_______|__
+ (  .  .  .  . )
+  '~~~~~~~~~~~~~'
+      |   |
+   *  .   .  *
+  .  *  .    .</pre>
+    </div>
+  </header>
+
+  <div class="breadcrumb"><a href="../index.html">[INDEX]</a> &gt; 0x04</div>
+
+  <div class="talk-header">
+    <div class="talk-num-badge">0x04 // AREA41::2026</div>
+    <div class="talk-title-large">DFIR Report At Cons： Deconstructing Real-World Intrusions</div>
+    <div class="talk-meta">
+      <span><span class="label">SPEAKER:</span> Angelo Violetti & Alessandro Di Carlo</span>
+      <span><span class="label">DURATION:</span> 29:03</span>
+    </div>
+  </div>
+
+    <details class="review-notes">
+      <summary>// REVIEW NOTES (4)</summary>
+      <ul>
+        <li>Corrected the spelling of the proxy DLL from 'Soper' to 'Sopper' to align with the transcript and correct phonetic identification.</li>
+        <li>Added 'Invisible Ferret' to the summary's payload list, as the transcript explicitly identified it as the primary Python-based RAT used in the North Korean campaign.</li>
+        <li>Clarified the initial infection trigger in the Contagious Interview campaign: the base64-encoded string was specifically disguised as a 'dev API key' within a server config file, rather than a generic Node.js environment variable.</li>
+        <li>Retained the summary's correct identification of 'wevtutil' for event log deletion, which the transcript misidentified via speech-to-text as 'Webutil'.</li>
+      </ul>
+    </details>
+
+  <div class="content-section">
+    <div class="section-label">SUMMARY</div>
+      <p><p>The DFIR Report team operates on a simple premise: real-world incidents teach better than sanitized simulations. In their briefing, Angelo Violetti and Alessandro Di Carlo deconstruct two distinct intrusions based on actual telemetry and artifacts. Rather than discussing abstract theory, they map the exact behaviors, timelines, and operational missteps of threat actors during live campaigns.</p><p>The first case, Contagious Interview, examines a North Korean campaign targeting cryptocurrency developers via fake recruiting pitches on LinkedIn and X. Once a target agrees to a coding test, they clone a decoy GitHub repository. Running NPM install triggers a base64-encoded developer API key hidden in a server configuration file, downloading a disguised payload. This initiates the Otter Cookie backdoor, which performs host enumeration and contacts a misconfigured WebSocket command-and-control server. From there, the attackers rapidly deploy a Python runtime, a keylogger, the Invisible Ferret remote access trojan, and the Tsunami toolkit for macOS and Windows persistence. The entire kill chain, from initial infection to full machine compromise, took under 51 minutes.</p><p>The second intrusion analyzes a Gootloader infection triggered by search engine optimization poisoning. An employee searching for a common law marriage template clicked a sponsored link and downloaded a malicious zip archive. The payload's behavior adapted to the extraction tool, delivering a raw JavaScript file via WinZip but masking it as a text file if extracted with 7-Zip. The attackers moved aggressively: within 20 minutes of the initial foothold, they executed Kerberoasting to target high-privilege service accounts, and within 45 minutes, they achieved lateral movement.</p><p>To maintain external access, the Gootloader operators deployed Sopper and Mubecon, custom DLLs designed to tunnel SOCKS5 traffic through the compromised network. However, network forensics revealed an operational flaw: when tunneling RDP sessions through these proxies, Windows event logs recorded the original command-and-control hostname rather than the internal proxy, providing a highly specific indicator of compromise. Recognizing their footprint, the attackers executed an automated cleanup script four hours later. Using the wevtutil native binary, they wiped application, system, and security event logs, deleted RDP bitmap caches, cleared registry history, and removed their tunneling DLLs to stall forensic investigation.</p></p>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">KEY TAKEAWAYS</div>
+    <ul class="takeaway-list">
+      <li>North Korean threat actors bypass standard code-review suspicion by hiding base64-encoded malicious payloads within the developer API keys of server configuration files in decoy GitHub repositories.</li>
+      <li>Targeting cryptocurrency developers with the Otter Cookie backdoor and Invisible Ferret RAT allows attackers to achieve full endpoint compromise and deploy Tsunami persistence in under 51 minutes.</li>
+      <li>Gootloader payloads adapt their delivery mechanisms based on the victim's software, executing as standard JavaScript through WinZip while masquerading as text files when extracted via 7-Zip.</li>
+      <li>Threat actors prioritize rapid escalation, moving from an initial SEO-poisoned search result to active Kerberoasting and lateral movement in exactly 45 minutes.</li>
+      <li>Tunneling RDP sessions through SOCKS5 proxy utilities like Sopper inadvertently leaks the external command-and-control server's hostname directly into internal Windows event logs.</li>
+      <li>Adversaries consistently execute aggressive anti-forensic measures, using native binaries like wevtutil to wipe event logs, RDP registry history, and bitmap caches before terminating their sessions.</li>
+    </ul>
+  </div>
+
+  <div class="ai-disclaimer">// This summary was generated by AI. AI can make mistakes. If in doubt, watch the original conference recording.</div>
+
+  <div class="footer">
+    <span>AREA41 2026 // TALK 0x04</span>
+    <span><a href="../index.html">&gt;&gt; BACK TO INDEX</a></span>
+  </div>
+</div>
+</body>
+</html>

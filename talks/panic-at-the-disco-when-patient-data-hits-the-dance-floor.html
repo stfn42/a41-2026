@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panic At The DISCO： When Patient Data Hits The Dance Floor // AREA41 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:       #00ff41;
+      --green-mid:   #00cc33;
+      --green-dim:   #007a1f;
+      --green-dark:  #003d0f;
+      --green-faint: rgba(0, 255, 65, 0.05);
+      --bg:          #040904;
+      --cyan:        #00ffcc;
+      --red:         #ff0040;
+      --amber:       #ffaa00;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--green);
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        linear-gradient(var(--green-faint) 1px, transparent 1px),
+        linear-gradient(90deg, var(--green-faint) 1px, transparent 1px),
+        radial-gradient(circle, rgba(0,255,65,0.10) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px, 40px 40px;
+      background-position: 0 0, 0 0, 19px 19px;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.10) 3px, rgba(0,0,0,0.10) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .container { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    /* header */
+    .header {
+      border: 1px solid var(--green-dim);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0,255,65,0.02);
+    }
+    .header::before {
+      content: '[ AREA41::CONFERENCE::RECAP ]';
+      position: absolute; top: -0.65rem; left: 1.5rem;
+      background: var(--bg); padding: 0 0.75rem;
+      font-size: 0.82rem; color: var(--green-dim); letter-spacing: 0.1em;
+    }
+    .header-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .ascii-logo-wrap { position: relative; display: inline-block; }
+    .ascii-logo {
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 0.9rem; line-height: 1.25; white-space: pre;
+      color: var(--green);
+      text-shadow: 0 0 8px rgba(0,255,65,0.9), 0 0 16px rgba(0,255,65,0.5), 0 0 32px rgba(0,255,65,0.2);
+      animation: glitch 9s infinite;
+    }
+    .banner-sub { font-size: 0.82rem; color: var(--green-dim); letter-spacing: 0.3em; margin-top: 0.75rem; }
+    .banner-year { font-size: 0.82rem; letter-spacing: 0.5em; color: var(--cyan); margin-top: 0.1rem; }
+    .logo-sweep { position: absolute; inset: 0; pointer-events: none; }
+    .logo-sweep::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 45%;
+      background: linear-gradient(to bottom, transparent,
+        rgba(180,255,210,0.06) 15%, rgba(200,255,230,0.22) 50%,
+        rgba(180,255,210,0.06) 85%, transparent);
+      animation: logo-sweep 6s linear infinite;
+    }
+    @keyframes logo-sweep {
+      0%   { transform: translateY(-150%); opacity: 0; }
+      4%   { opacity: 1; }
+      28%  { transform: translateY(370%);  opacity: 1; }
+      29%  { transform: translateY(-150%); opacity: 0; }
+      100% { transform: translateY(-150%); opacity: 0; }
+    }
+    @keyframes glitch {
+      0%, 82%, 100% { text-shadow: 0 0 8px rgba(0,255,65,0.9), 0 0 16px rgba(0,255,65,0.5); transform: none; }
+      84% { text-shadow: -3px 0 var(--red), 3px 0 var(--cyan); transform: translate(-2px,0) skewX(-1deg); }
+      86% { text-shadow: 3px 0 var(--red), -3px 0 var(--cyan); transform: translate(2px,0); }
+      88% { text-shadow: -1px 0 var(--red); transform: skewX(0.5deg); }
+      90% { text-shadow: 0 0 8px rgba(0,255,65,0.9); transform: none; }
+    }
+    .ufo { font-size: 0.7rem; color: var(--green-dim); white-space: pre; line-height: 1.3; text-align: right; opacity: 0.6; flex-shrink: 0; }
+    /* section labels */
+    .section-label {
+      font-size: 0.85rem; color: var(--green-dim); letter-spacing: 0.15em;
+      text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--green-dark);
+    }
+    .section-label::before { content: '// '; color: var(--cyan); }
+    /* talk list */
+    .talk-list { list-style: none; margin-bottom: 3rem; }
+    .talk-list li { border-bottom: 1px solid rgba(0,255,65,0.06); }
+    .talk-list li:hover { background: rgba(0,255,65,0.03); }
+    .talk-link { display: flex; align-items: baseline; text-decoration: none; color: inherit; padding: 0.45rem 0.25rem; }
+    .t-num { color: var(--cyan); min-width: 5rem; flex-shrink: 0; font-size: 1rem; }
+    .t-title { color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
+    .t-dots { flex: 1; border-bottom: 1px dotted var(--green-dark); margin: 0 0.6rem; min-width: 1.5rem; position: relative; top: -0.35em; flex-shrink: 0; }
+    .t-speaker { color: var(--green-dim); white-space: nowrap; flex-shrink: 0; font-size: 1rem; }
+    .talk-link:hover .t-title { color: var(--cyan); }
+    .talk-link:hover .t-speaker { color: var(--green-mid); }
+    /* talk detail */
+    .breadcrumb { font-size: 0.9rem; color: var(--green-dim); margin-bottom: 1.5rem; }
+    .breadcrumb a { color: var(--cyan); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .talk-header {
+      border: 1px solid var(--green-dim); padding: 1.5rem 2rem; margin-bottom: 2rem;
+      position: relative; background: rgba(0,255,65,0.02);
+    }
+    .talk-num-badge { font-family: 'VT323', monospace; font-size: 1.2rem; color: var(--cyan); letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+    .talk-title-large { font-family: 'VT323', monospace; font-size: 3rem; line-height: 1.1; color: var(--green); margin-bottom: 0.75rem; }
+    .talk-meta { font-size: 0.9rem; color: var(--green-dim); display: flex; gap: 2rem; flex-wrap: wrap; }
+    .talk-meta .label { color: var(--green-dark); }
+    .tldr-box {
+      border-left: 3px solid var(--cyan); background: rgba(0,255,204,0.04);
+      padding: 0.75rem 1rem; margin-bottom: 2rem; font-size: 1.05rem; color: var(--cyan);
+    }
+    .tldr-box::before { content: 'TL;DR > '; color: var(--green-dim); font-size: 0.82rem; }
+    .content-section { margin-bottom: 2rem; }
+    .content-section p { color: #a0cca0; margin-bottom: 0.75rem; }
+    .takeaway-list { list-style: none; }
+    .takeaway-list li { padding: 0.35rem 0 0.35rem 1.5rem; position: relative; color: #a0cca0; }
+    .takeaway-list li::before { content: '>>'; position: absolute; left: 0; color: var(--amber); }
+    .footer {
+      border-top: 1px solid var(--green-dark); padding-top: 1rem; margin-top: 3rem;
+      font-size: 0.85rem; color: var(--green-dark); display: flex; justify-content: space-between;
+    }
+    .footer a { color: var(--green-dim); text-decoration: none; }
+    .footer a:hover { color: var(--green); }
+    .ai-disclaimer {
+      font-size: 0.82rem; color: var(--green-dim);
+      border-top: 1px solid var(--green-dark);
+      padding-top: 0.75rem; margin-top: 2rem;
+    }
+    .review-notes {
+      border: 1px dashed var(--green-dark); padding: 0.75rem 1rem; margin-bottom: 2rem;
+      font-size: 0.82rem; color: var(--green-dim);
+    }
+    .review-notes summary { cursor: pointer; color: var(--green-dark); }
+    .review-notes li { margin-top: 0.25rem; }
+
+  </style>
+  
+</head>
+<body>
+<div class="container">
+  <header class="header">
+    <div class="logo-sweep"></div>
+    <div class="header-inner">
+      <div>
+        <div class="ascii-logo-wrap">
+        <pre class="ascii-logo"> █████╗  ██████╗  ███████╗  █████╗      ██╗  ██╗  ██╗
+██╔══██╗ ██╔══██╗ ██╔════╝ ██╔══██╗    ██║  ██║ ███║
+███████║ ██████╔╝ █████╗   ███████║    ███████║ ╔██║
+██╔══██║ ██╔══██╗ ██╔══╝   ██╔══██║    ╔════██║  ██║
+██║  ██║ ██║  ██║ ███████╗ ██║  ██║         ██║  ██║
+╔═╝  ╔═╝ ╔═╝  ╔═╝ ╔══════╝ ╔═╝  ╔═╝         ╔═╝  ╔═╝</pre>
+        </div>
+        <div class="banner-sub">▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒</div>
+        <div class="banner-year">:: 2 0 2 6 :: C O N F E R E N C E :: R E C A P ::</div>
+      </div>
+      <pre class="ufo">    . * .  .  *
+  *    .    *
+     .-~~~-.
+  __|_______|__
+ (  .  .  .  . )
+  '~~~~~~~~~~~~~'
+      |   |
+   *  .   .  *
+  .  *  .    .</pre>
+    </div>
+  </header>
+
+  <div class="breadcrumb"><a href="../index.html">[INDEX]</a> &gt; 0x0B</div>
+
+  <div class="talk-header">
+    <div class="talk-num-badge">0x0B // AREA41::2026</div>
+    <div class="talk-title-large">Panic At The DISCO： When Patient Data Hits The Dance Floor</div>
+    <div class="talk-meta">
+      <span><span class="label">SPEAKER:</span> Marina Bochenkova</span>
+      <span><span class="label">DURATION:</span> 32:06</span>
+    </div>
+  </div>
+
+    <details class="review-notes">
+      <summary>// REVIEW NOTES (3)</summary>
+      <ul>
+        <li>The summary referred to the IT firm as explicitly 'bankrupt,' but the transcript only mentions severe financial difficulties leading up to the owner's death and eventual liquidation; formal bankruptcy wasn't legally confirmed.</li>
+        <li>The summary stated the master client list was discovered on the 'final drive,' but the transcript specifies it was found on drive number 48 (out of the 48 or 49 intact drives).</li>
+        <li>Added specific details omitted from the original summary: the colleague originally used Autopsy before the speaker pivoted to Velociraptor, and the ex-employee was creatively tracked down via a shared connection in the Dutch national fencing community.</li>
+      </ul>
+    </details>
+
+  <div class="content-section">
+    <div class="section-label">SUMMARY</div>
+      <p>A random bathroom stop at an abandoned Dutch airport led a tech enthusiast to purchase five used hard drives for five euros each. Instead of blank storage, they found unencrypted, highly sensitive medical records—including citizen identification numbers, prescriptions, and scans. When the buyer returned for the rest, bringing the total to nearly fifty drives, local police and the data protection authority declined to investigate because selling un-sanitized hardware is not legally classified as theft. The case ultimately fell to Z-Cert, the Dutch national healthcare computer emergency response team, where digital forensics investigator Marina Bochenkova took over to trace the data's origin.</p>
+      <p>The initial analysis proved logistically messy. After copying nearly two terabytes of disorganized data from the physical drives, Bochenkova’s colleague attempted to map the contents using Autopsy. Finding this inefficient, Bochenkova switched to Velociraptor’s dead disk forensics mode. By feeding raw disk images into Velociraptor and generating remapping and write-back files, they treated the inert drives as simulated live endpoints. They focused purely on file system metadata to minimize exposure to the raw patient records. Querying MACB (Modified, Accessed, Created, Born) timestamps and USB connection artifacts, they successfully identified which files had been copied post-mortem—as copied files generate a new birth time while inheriting the original modified time.</p>
+      <p>A master list found on drive 48 revealed 143 compromised healthcare organizations. Moving beyond the disks, Bochenkova reconstructed the corporate footprint of Nortada, the defunct IT provider responsible for the data. Through municipal death records and corporate registry databases, they discovered Nortada's owner had died in July 2022. The company’s assets, including the hard drives, were left in the hands of a liquidating notary. When Bochenkova contacted the notary, they received no reply; instead, the notary quietly altered and closed the associated nonprofit's corporate registration a week later.</p>
+      <p>Tracking down a former Nortada employee through the Dutch national fencing circuit confirmed the provider's history of severe financial instability, including months of unpaid wages. This insolvency likely motivated the liquidators to sell off physical assets without prioritizing data destruction. While regulatory loopholes protect the notary from immediate criminal charges, Z-Cert is currently notifying the 143 exposed organizations. Bochenkova's investigation proves that legacy asset retirement remains a massive, unmonitored supply chain vulnerability for the healthcare sector.</p>
+  </div>
+
+  <div class="content-section">
+    <div class="section-label">KEY TAKEAWAYS</div>
+    <ul class="takeaway-list">
+      <li>Discarding un-sanitized storage hardware from insolvent companies creates massive data exposure risks, often because liquidators prioritize physical asset recovery over secure deletion.</li>
+      <li>Selling hardware containing sensitive personal information is not universally classified as a criminal offense, creating jurisdictional blind spots that deter traditional law enforcement.</li>
+      <li>Investigators can use Velociraptor’s dead disk forensics mode to ingest raw disk images with remapping files, allowing them to query inert drives as if they were live endpoints.</li>
+      <li>Analyzing MACB timestamps allows forensic analysts to detect unauthorized file duplication, as copied files generate a new creation time while inheriting their original modified time.</li>
+      <li>Third-party healthcare IT providers often consolidate and retain client databases long after active service ends, requiring active supply chain oversight to ensure proper data sanitization.</li>
+    </ul>
+  </div>
+
+  <div class="ai-disclaimer">// This summary was generated by AI. AI can make mistakes. If in doubt, watch the original conference recording.</div>
+
+  <div class="footer">
+    <span>AREA41 2026 // TALK 0x0B</span>
+    <span><a href="../index.html">&gt;&gt; BACK TO INDEX</a></span>
+  </div>
+</div>
+</body>
+</html>
