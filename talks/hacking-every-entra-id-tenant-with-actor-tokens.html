@@ -196,14 +196,6 @@
     </div>
   </div>
 
-    <details class="review-notes">
-      <summary>// REVIEW NOTES (3)</summary>
-      <ul>
-        <li>Clarified the mechanics of the cross-tenant bypass: the original summary stated the attacker swapped the target tenant ID and victim user's unique net ID in the unsigned token, but the transcript implies the tenant ID manipulation occurred at the API request level while the backend failed to validate it against the signed inner token.</li>
-        <li>Added specific details about the AlternativeSecurityIds attribute being the exact location where B2B guest Net IDs are extracted.</li>
-        <li>Included the exact signing algorithm manipulation (the none algorithm) used for the locally generated outer JSON Web Token, which was omitted from the original JSON.</li>
-      </ul>
-    </details>
 
   <div class="content-section">
     <div class="section-label">SUMMARY</div>
