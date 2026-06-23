@@ -141,6 +141,17 @@
     }
     .footer a { color: var(--green-dim); text-decoration: none; }
     .footer a:hover { color: var(--green); }
+    @media (max-width: 640px) {
+      .ascii-logo { font-size: 0.45rem; }
+      .banner-sub, .banner-year { font-size: 0.65rem; letter-spacing: 0.1em; }
+      .ufo { display: none; }
+      .talk-link { flex-wrap: wrap; gap: 0.15rem 0; }
+      .t-title { white-space: normal; overflow: visible; text-overflow: clip; flex-basis: calc(100% - 5rem); }
+      .t-dots { display: none; }
+      .t-speaker { flex-basis: 100%; padding-left: 5rem; font-size: 0.85rem; }
+      .talk-title-large { font-size: 1.8rem; }
+      .container { padding: 1rem 1rem 3rem; }
+    }
     .ai-disclaimer {
       font-size: 0.82rem; color: var(--green-dim);
       border-top: 1px solid var(--green-dark);
